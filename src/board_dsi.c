@@ -57,9 +57,6 @@ static const board_gpioInfo_type board_gpioSw[] =
     {PORTC, GPIOC, 12},     /* SW3 */
 };
 
-bool isLedBlinking = false;
-bool isLedHB = false;
-
 /*==================[internal functions declaration]=========================*/
 
 /*==================[internal data definition]===============================*/
@@ -152,15 +149,6 @@ void board_setLed(board_ledId_enum id, board_ledMsg_enum msg)
             break;
 
         case BOARD_LED_MSG_BLINKY:
-            paramBlinky_t blinkdata = {.idLed = id};
-            if(isLedBlinking)
-            {
-                break;
-            }
-            else
-            {
-                xTaskCreate(board_ledBlinky, "blinky", 100, &blinkdata, 1, NULL);
-            }
             break;
 
         case BOARD_LED_MSG_HEARTBEAT:
@@ -168,19 +156,6 @@ void board_setLed(board_ledId_enum id, board_ledMsg_enum msg)
 
         default:
             break;
-    }
-}
-
-void board_ledBlinky(void *pvParameters)
-{
-    paramBlinky_t *paramBlinky_t;
-    paramBlinky = (paramBlinky_t*)pvParameters;
-    while(1)
-    {
-        board_setLed(paramBlinky->idLed, BOARD_LED_MSG_ON);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        board_setLed(paramBlinky->idLed, BOARD_LED_MSG_OFF);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
     }
 }
 
